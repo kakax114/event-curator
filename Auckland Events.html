@@ -52,9 +52,9 @@ body{background:#c8c8c8;font-family:'Inter',sans-serif}
 .sw:hover{transform:scale(1.2)}
 .sw.on{border-color:#111}
 
-/* ── HAMBURGER (mobile) ─────────────────────────────────────────────────── */
+/* ── HAMBURGER ───────────────────────────────────────────────────────────── */
 #burger{
-  display:none;flex-direction:column;justify-content:center;gap:5px;
+  display:flex;flex-direction:column;justify-content:center;gap:5px;
   width:36px;height:36px;padding:6px;margin-left:auto;
   background:none;border:none;cursor:pointer;flex-shrink:0;border-radius:6px;
   transition:background .13s}
@@ -78,10 +78,7 @@ body{background:#c8c8c8;font-family:'Inter',sans-serif}
 .drawer-label{font-size:0.58rem;font-weight:700;letter-spacing:.14em;
   text-transform:uppercase;color:#bbb}
 
-@media(max-width:700px){
-  #cats,#times,.div,#openall,#swatches{display:none!important}
-  #burger{display:flex}
-}
+#cats,#times,.div,#openall,#swatches{display:none!important}
 #cats-m,#times-m{display:flex;gap:6px;flex-wrap:wrap}
 #swatches-m{display:flex;gap:5px;align-items:center}
 #openall-m{
