@@ -74,9 +74,9 @@ body{background:#c8c8c8;font-family:'Inter',sans-serif}
   padding:14px 22px 18px;flex-direction:column;gap:14px}
 #drawer.open{display:flex}
 
-.drawer-row{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
-.drawer-label{font-size:0.62rem;font-weight:700;letter-spacing:.1em;
-  text-transform:uppercase;color:#bbb;width:52px;flex-shrink:0}
+.drawer-row{display:flex;flex-direction:column;gap:6px}
+.drawer-label{font-size:0.58rem;font-weight:700;letter-spacing:.14em;
+  text-transform:uppercase;color:#bbb}
 
 @media(max-width:700px){
   #cats,#times,.div,#openall,#swatches{display:none!important}
@@ -121,9 +121,18 @@ body{background:#c8c8c8;font-family:'Inter',sans-serif}
 .tile.w2{grid-column:span 2;min-height:145px}
 .tile.w3{grid-column:span 3}
 
+/* Grain texture */
+.tile::before{
+  content:'';position:absolute;inset:0;pointer-events:none;
+  opacity:.22;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23g)'/%3E%3C/svg%3E");
+  background-size:200px 200px;
+  mix-blend-mode:overlay;
+}
+
 /* Sheen */
 .tile::after{content:'';position:absolute;inset:0;pointer-events:none;
-  background:linear-gradient(145deg,rgba(255,255,255,0.13) 0%,rgba(0,0,0,0.05) 100%)}
+  background:linear-gradient(145deg,rgba(255,255,255,0.1) 0%,rgba(0,0,0,0.08) 100%)}
 
 /* SVG illustration — coloured, screen blend adds onto tile bg */
 .t-ill{position:absolute;right:-6px;top:-6px;width:120px;height:120px;
