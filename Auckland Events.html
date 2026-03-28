@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Auckland Events</title>
+<link href="https://fonts.googleapis.com/css2?family=Notable&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{background:#c8c8c8;font-family:'Inter',sans-serif}
+
+/* ── TOP BAR ─────────────────────────────────────────────────────────────── */
+#bar{
+  position:sticky;top:0;z-index:40;background:#fff;
+  border-bottom:1.5px solid #e8e8e8;
+  display:flex;align-items:center;
+  height:50px;padding:0 22px;gap:0;
+  box-shadow:0 2px 8px rgba(0,0,0,0.07);
+}
+#bar-title{
+  font-family:'Notable',sans-serif;font-size:0.88rem;
+  letter-spacing:0.07em;text-transform:uppercase;color:#111;
+  white-space:nowrap;margin-right:18px;
+}
+.div{width:1.5px;height:20px;background:#e8e8e8;margin:0 14px;flex-shrink:0}
+.sp{flex:1}
+
+#cats{display:flex;gap:16px}
+.cat{font-size:0.76rem;font-weight:500;color:#bbb;background:none;border:none;
+  cursor:pointer;padding:2px 0;border-bottom:2px solid transparent;
+  transition:color .13s,border-color .13s;white-space:nowrap}
+.cat:hover{color:#555}
+.cat.on{color:#111;font-weight:700;border-bottom-color:#111}
+
+#times{display:flex;gap:3px}
+.tm{font-size:0.69rem;font-weight:500;color:#aaa;background:none;
+  border:1.5px solid transparent;border-radius:5px;padding:3px 9px;
+  cursor:pointer;transition:all .13s;white-space:nowrap}
+.tm:hover{color:#555;border-color:#ddd}
+.tm.on{color:#111;border-color:#111;font-weight:600}
+
+#openall{
+  font-family:'Notable',sans-serif;font-size:0.7rem;
+  letter-spacing:0.05em;text-transform:uppercase;
+  background:#111;color:#fff;border:none;border-radius:6px;
+  padding:6px 13px;cursor:pointer;white-space:nowrap;transition:background .13s}
+#openall:hover{background:#333}
+
+#swatches{display:flex;gap:5px;align-items:center}
+.sw{width:17px;height:17px;border-radius:50%;cursor:pointer;
+  border:2.5px solid transparent;transition:transform .14s,border-color .14s;flex-shrink:0}
+.sw:hover{transform:scale(1.2)}
+.sw.on{border-color:#111}
+
+/* ── GRID ───────────────────────────────────────────────────────────────── */
+#grid{display:grid;grid-template-columns:repeat(5,1fr);
+  gap:3px;background:#b8b8b8;grid-auto-flow:dense}
+@media(max-width:1000px){#grid{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:580px) {#grid{grid-template-columns:repeat(2,1fr)}}
+
+.sec{grid-column:1/-1;background:#e8e8e8;padding:7px 16px;
+  font-size:0.58rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:#aaa}
+
+/* ── TILE ───────────────────────────────────────────────────────────────── */
+.tile{
+  position:relative;display:flex;flex-direction:column;
+  min-height:155px;padding:14px;color:#fff;text-decoration:none;
+  overflow:hidden;cursor:pointer;transition:filter .13s}
+.tile:hover{filter:brightness(1.1)}
+.tile.w2{grid-column:span 2;min-height:145px}
+.tile.w3{grid-column:span 3}
+
+/* Sheen */
+.tile::after{content:'';position:absolute;inset:0;pointer-events:none;
+  background:linear-gradient(145deg,rgba(255,255,255,0.13) 0%,rgba(0,0,0,0.05) 100%)}
+
+/* SVG illustration — coloured, screen blend adds onto tile bg */
+.t-ill{position:absolute;right:-6px;top:-6px;width:120px;height:120px;
+  opacity:.72;pointer-events:none;mix-blend-mode:screen}
+.tile.w2 .t-ill,.tile.w3 .t-ill{width:150px;height:150px}
+
+/* Footer content */
+.t-foot{margin-top:auto;position:relative;z-index:1}
+.t-name{font-family:'Notable',sans-serif;font-size:1.08rem;line-height:1.15;letter-spacing:-.01em}
+.tile.w2 .t-name,.tile.w3 .t-name{font-size:1.3rem}
+.t-desc{font-size:0.67rem;opacity:.72;margin-top:5px;line-height:1.45;
+  display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+
+/* Brand favicon bottom-right */
+.t-fav{
+  position:absolute;bottom:11px;right:12px;z-index:2;
+  width:24px;height:24px;border-radius:5px;
+  background:rgba(255,255,255,0.2);
+  display:flex;align-items:center;justify-content:center;
+  backdrop-filter:blur(4px)}
+.t-fav img{width:14px;height:14px;object-fit:contain}
+
+/* Arrow top-right */
+.t-arr{position:absolute;top:12px;right:14px;font-size:0.68rem;opacity:.38;z-index:1}
+</style>
+</head>
+<body>
+
+<div id="bar">
+  <div id="bar-title">Auckland Events</div>
+  <div id="cats">
+    <button class="cat on" data-c="all">All</button>
+    <button class="cat" data-c="music">Music</button>
+    <button class="cat" data-c="sports">Sports</button>
+    <button class="cat" data-c="arts">Arts</button>
+    <button class="cat" data-c="venue">Venues</button>
+  </div>
+  <div class="div"></div>
+  <div id="times">
+    <button class="tm" data-t="week">Week</button>
+    <button class="tm on" data-t="month">Month</button>
+    <button class="tm" data-t="all">All</button>
+  </div>
+  <div class="div"></div>
+  <button id="openall">Open all ↗</button>
+  <div class="div"></div>
+  <div id="swatches"></div>
+</div>
+
+<div id="grid"></div>
+
+<script>
+// ── Per-site NZ illustrations — coloured, NZ-themed ─────────────────────────
+const ILLS = {
+  // Rangitoto volcano — charcoal silhouette, orange lava glow at summit
+  'ticketmaster':`<svg viewBox="0 0 100 90" fill="none"><path d="M10 78L50 16L90 78Z" fill="#3a3028" opacity=".6"/><path d="M36 78L50 32L64 78Z" fill="#5a4a3a" opacity=".5"/><path d="M0 82Q25 74 50 78Q75 74 100 82L100 90 0 90Z" fill="#2a2020" opacity=".55"/><radialGradient id="lv"><stop offset="0%" stop-color="#FF6B35" stop-opacity=".9"/><stop offset="100%" stop-color="#FF6B35" stop-opacity="0"/></radialGradient><ellipse cx="50" cy="18" rx="18" ry="10" fill="url(#lv)"/><path d="M46 16Q50 12 54 16" stroke="#FFD54F" stroke-width="2.5" stroke-linecap="round" opacity=".95"/><path d="M50 12Q50 6 50 2" stroke="#FF8F00" stroke-width="2" opacity=".85" stroke-linecap="round"/></svg>`,
+
+  // Silver fern — bright NZ green
+  'ticketek':`<svg viewBox="0 0 100 120" fill="none"><line x1="50" y1="115" x2="50" y2="10" stroke="#4CAF50" stroke-width="3" opacity=".65" stroke-linecap="round"/><path d="M50 88Q37 80 20 66" stroke="#66BB6A" stroke-width="3" opacity=".8" stroke-linecap="round"/><path d="M50 70Q34 62 16 50" stroke="#81C784" stroke-width="2.5" opacity=".75" stroke-linecap="round"/><path d="M50 53Q36 45 21 35" stroke="#66BB6A" stroke-width="2" opacity=".7" stroke-linecap="round"/><path d="M50 38Q38 31 28 22" stroke="#4CAF50" stroke-width="2" opacity=".65" stroke-linecap="round"/><path d="M50 88Q63 80 80 66" stroke="#66BB6A" stroke-width="3" opacity=".8" stroke-linecap="round"/><path d="M50 70Q66 62 84 50" stroke="#81C784" stroke-width="2.5" opacity=".75" stroke-linecap="round"/><path d="M50 53Q64 45 79 35" stroke="#66BB6A" stroke-width="2" opacity=".7" stroke-linecap="round"/><path d="M50 38Q62 31 72 22" stroke="#4CAF50" stroke-width="2" opacity=".65" stroke-linecap="round"/><path d="M50 24Q44 18 38 22M50 24Q56 18 62 22" stroke="#A5D6A7" stroke-width="1.5" opacity=".7" stroke-linecap="round"/></svg>`,
+
+  // Pohutukawa — dark green canopy, crimson flowers
+  'livenation':`<svg viewBox="0 0 100 100" fill="none"><rect x="46" y="68" width="8" height="30" rx="3" fill="#5D4037" opacity=".65"/><ellipse cx="50" cy="38" rx="40" ry="26" fill="#2E7D32" opacity=".5"/><ellipse cx="28" cy="46" rx="20" ry="13" fill="#388E3C" opacity=".45"/><ellipse cx="72" cy="42" rx="18" ry="12" fill="#388E3C" opacity=".45"/><ellipse cx="50" cy="28" rx="32" ry="18" fill="#43A047" opacity=".38"/><circle cx="32" cy="26" r="4" fill="#C62828" opacity=".9"/><circle cx="50" cy="18" r="3.5" fill="#E53935" opacity=".9"/><circle cx="67" cy="23" r="4" fill="#C62828" opacity=".9"/><circle cx="22" cy="38" r="3" fill="#EF5350" opacity=".85"/><circle cx="42" cy="32" r="2.5" fill="#E53935" opacity=".85"/><circle cx="60" cy="30" r="2.5" fill="#C62828" opacity=".85"/><circle cx="78" cy="34" r="3" fill="#EF5350" opacity=".85"/></svg>`,
+
+  // Kiwi bird — brown fluffy body, long beak
+  'ticketdirect':`<svg viewBox="0 0 100 100" fill="none"><ellipse cx="46" cy="62" rx="28" ry="22" fill="#795548" opacity=".7"/><circle cx="70" cy="50" r="13" fill="#6D4C41" opacity=".65"/><path d="M70 50Q86 44 96 40" stroke="#8D6E63" stroke-width="3" opacity=".75" stroke-linecap="round"/><circle cx="75" cy="46" r="2.5" fill="#1a1a1a" opacity=".9"/><circle cx="76" cy="45.5" r=".8" fill="white" opacity=".8"/><path d="M35 82L32 94M46 85L46 95M57 82L60 94" stroke="#A1887F" stroke-width="3" opacity=".55" stroke-linecap="round"/></svg>`,
+
+  // Auckland Harbour Bridge — steel blue arches
+  'eventfinda':`<svg viewBox="0 0 100 78" fill="none"><path d="M5 68Q5 32 50 28Q95 32 95 68" stroke="#90CAF9" stroke-width="3.5" opacity=".75" fill="none"/><path d="M15 68Q15 40 50 36Q85 40 85 68" stroke="#64B5F6" stroke-width="2" opacity=".55" fill="none"/><line x1="0" y1="68" x2="100" y2="68" stroke="#1976D2" stroke-width="4" opacity=".8"/><line x1="50" y1="28" x2="50" y2="68" stroke="#1976D2" stroke-width="2" opacity=".6"/><line x1="28" y1="40" x2="28" y2="68" stroke="#1976D2" stroke-width="1.5" opacity=".5"/><line x1="72" y1="40" x2="72" y2="68" stroke="#1976D2" stroke-width="1.5" opacity=".5"/><line x1="18" y1="54" x2="18" y2="68" stroke="#42A5F5" stroke-width="1" opacity=".5"/><line x1="82" y1="54" x2="82" y2="68" stroke="#42A5F5" stroke-width="1" opacity=".5"/></svg>`,
+
+  // Kowhai — golden yellow bell flowers
+  'eventbrite':`<svg viewBox="0 0 100 110" fill="none"><path d="M50 105Q50 68 54 40Q57 18 50 8" stroke="#558B2F" stroke-width="2.5" opacity=".65" stroke-linecap="round"/><path d="M54 40Q38 33 26 18M55 56Q70 48 80 35" stroke="#689F38" stroke-width="2" opacity=".6" stroke-linecap="round"/><path d="M24 22Q22 13 26 8Q30 3 32 10L30 22Z" fill="#F9A825" opacity=".95"/><path d="M38 30Q36 21 40 16Q44 11 46 18L44 30Z" fill="#FFB300" opacity=".9"/><path d="M77 37Q75 28 79 23Q83 18 85 25L83 37Z" fill="#F9A825" opacity=".9"/><path d="M58 60Q56 51 60 46Q64 41 66 48L64 60Z" fill="#FFB300" opacity=".85"/></svg>`,
+
+  // NZ map outline — teal North + South Island
+  'aucklandnz':`<svg viewBox="0 0 80 130" fill="none"><path d="M58 14Q66 19 68 29Q70 40 63 48Q56 56 46 58Q36 60 27 53Q19 46 17 36Q15 26 22 18Q29 10 40 8Q52 7 58 14Z" fill="#00897B" opacity=".55" stroke="#4DB6AC" stroke-width="2" opacity=".7"/><path d="M52 70Q62 73 65 86Q67 98 59 106Q51 114 39 112Q27 110 20 100Q13 90 16 78Q20 66 32 64Q44 62 52 70Z" fill="#00796B" opacity=".5" stroke="#26A69A" stroke-width="1.5" opacity=".65"/><circle cx="38" cy="34" r="3.5" fill="#FFD54F" opacity=".9"/><line x1="38" y1="34" x2="35" y2="62" stroke="#80CBC4" stroke-width="1" stroke-dasharray="3,3" opacity=".6"/></svg>`,
+
+  // Nikau palm — bright green fronds
+  'concreteplayground':`<svg viewBox="0 0 100 130" fill="none"><rect x="46" y="72" width="8" height="55" rx="4" fill="#795548" opacity=".55"/><path d="M50 70Q28 54 8 48" stroke="#66BB6A" stroke-width="4.5" opacity=".8" stroke-linecap="round"/><path d="M50 70Q72 52 92 44" stroke="#4CAF50" stroke-width="4.5" opacity=".8" stroke-linecap="round"/><path d="M50 70Q40 46 36 24" stroke="#81C784" stroke-width="3.5" opacity=".75" stroke-linecap="round"/><path d="M50 70Q60 46 64 24" stroke="#66BB6A" stroke-width="3.5" opacity=".75" stroke-linecap="round"/><path d="M50 70Q18 64 6 66M50 70Q82 62 94 64" stroke="#A5D6A7" stroke-width="2.5" opacity=".6" stroke-linecap="round"/><circle cx="8" cy="48" r="4" fill="#388E3C" opacity=".7"/><circle cx="92" cy="44" r="4" fill="#388E3C" opacity=".7"/></svg>`,
+
+  // Sky Tower — white/blue tower
+  'heartofthecity':`<svg viewBox="0 0 100 140" fill="none"><path d="M44 140L42 85L46 22L50 5L54 22L58 85L56 140Z" fill="#B0BEC5" opacity=".5"/><rect x="34" y="72" width="32" height="14" rx="2" fill="#90A4AE" opacity=".55"/><rect x="38" y="66" width="24" height="9" rx="1" fill="#CFD8DC" opacity=".5"/><path d="M32 140L40 88L60 88L68 140Z" fill="#78909C" opacity=".3"/><line x1="50" y1="5" x2="50" y2="-4" stroke="#FF8F00" stroke-width="3" opacity=".9"/><circle cx="50" cy="78" r="4" stroke="#4FC3F7" stroke-width="2.5" opacity=".75" fill="none"/><ellipse cx="50" cy="78" rx="22" ry="4" fill="#E1F5FE" opacity=".25"/></svg>`,
+
+  // Fantail / piwakawaka — russet brown fan tail
+  'facebook':`<svg viewBox="0 0 100 100" fill="none"><ellipse cx="52" cy="46" rx="13" ry="9" fill="#795548" opacity=".7"/><circle cx="64" cy="38" r="7" fill="#6D4C41" opacity=".65"/><ellipse cx="60" cy="43" rx="5" ry="3" fill="#D7CCC8" opacity=".6"/><circle cx="67" cy="36" r="2" fill="#1a1a1a" opacity=".9"/><path d="M70 36L78 34" stroke="#BCAAA4" stroke-width="2" opacity=".7" stroke-linecap="round"/><path d="M41 50Q28 36 18 24" stroke="#8D6E63" stroke-width="3" opacity=".75" stroke-linecap="round"/><path d="M39 53Q26 44 14 40" stroke="#A1887F" stroke-width="3" opacity=".7" stroke-linecap="round"/><path d="M39 57Q26 54 16 56" stroke="#BCAAA4" stroke-width="2.5" opacity=".65" stroke-linecap="round"/><path d="M40 61Q28 62 18 67" stroke="#D7CCC8" stroke-width="2.5" opacity=".6" stroke-linecap="round"/><path d="M41 65Q30 68 22 75" stroke="#D7CCC8" stroke-width="2" opacity=".55" stroke-linecap="round"/></svg>`,
+
+  // Ocean waves — NZ coastline blues
+  'google':`<svg viewBox="0 0 100 80" fill="none"><path d="M0 18Q12 8 25 18Q38 28 50 18Q62 8 75 18Q88 28 100 18" stroke="#0288D1" stroke-width="4" opacity=".8" fill="none" stroke-linecap="round"/><path d="M0 34Q12 24 25 34Q38 44 50 34Q62 24 75 34Q88 44 100 34" stroke="#0277BD" stroke-width="3" opacity=".65" fill="none" stroke-linecap="round"/><path d="M0 50Q12 40 25 50Q38 60 50 50Q62 40 75 50Q88 60 100 50" stroke="#01579B" stroke-width="2.5" opacity=".5" fill="none" stroke-linecap="round"/><path d="M0 18Q12 8 25 18Q38 28 50 18Q62 8 75 18Q88 28 100 18L100 80 0 80Z" fill="#0288D1" opacity=".12"/></svg>`,
+
+  // Tui — dark blue-black, white bow tie
+  'songkick':`<svg viewBox="0 0 100 110" fill="none"><path d="M40 68Q33 52 38 36Q46 18 57 24Q70 32 68 52Q65 67 55 74Q48 78 40 68Z" fill="#1A237E" opacity=".65"/><ellipse cx="60" cy="26" rx="11" ry="10" fill="#283593" opacity=".6"/><path d="M53 34Q57 31 61 34Q59 38 57 36Q55 38 53 34Z" fill="white" opacity=".95"/><circle cx="56" cy="32" r="3" fill="white" opacity=".85"/><path d="M68 22Q78 18 80 22Q79 26 72 26" stroke="#90CAF9" stroke-width="2" opacity=".7" fill="none" stroke-linecap="round"/><circle cx="64" cy="22" r="2.5" fill="#1a1a1a" opacity=".9"/><path d="M40 68Q33 78 30 90" stroke="#3949AB" stroke-width="3.5" opacity=".55" stroke-linecap="round"/></svg>`,
+
+  // Kereru — iridescent green-purple plumage
+  'undertheradar':`<svg viewBox="0 0 100 100" fill="none"><ellipse cx="48" cy="60" rx="30" ry="24" fill="#4A148C" opacity=".4"/><circle cx="68" cy="40" r="16" fill="#1B5E20" opacity=".6"/><ellipse cx="44" cy="65" rx="16" ry="10" fill="#E8EAF6" opacity=".5"/><path d="M58 50Q63 44 68 50Q63 56 58 50Z" fill="#7B1FA2" opacity=".65"/><circle cx="73" cy="37" r="3" fill="#1a1a1a" opacity=".9"/><path d="M82 38Q90 35 88 41" stroke="#FF6F00" stroke-width="2.5" opacity=".85" fill="none" stroke-linecap="round"/><path d="M40 82L38 93M50 84L50 93M60 82L62 93" stroke="#9E9E9E" stroke-width="2.5" opacity=".45" stroke-linecap="round"/></svg>`,
+
+  // Koru — emerald green spiral
+  'rova':`<svg viewBox="0 0 100 100" fill="none"><path d="M50 90Q50 65 58 50Q68 34 80 32Q92 32 94 42Q96 54 86 61Q76 68 67 62Q58 56 61 46Q64 38 72 38Q78 38 79 44Q79 50 74 53" stroke="#00897B" stroke-width="5" opacity=".8" fill="none" stroke-linecap="round"/><path d="M50 90Q50 65 42 50Q32 34 20 32Q8 32 6 42Q4 54 14 61Q24 68 33 62Q42 56 39 46Q36 38 28 38Q22 38 21 44Q21 50 26 53" stroke="#26A69A" stroke-width="3.5" opacity=".6" fill="none" stroke-linecap="round"/></svg>`,
+
+  // Kauri tree — NZ's giant, massive flat canopy
+  'ef-music':`<svg viewBox="0 0 100 120" fill="none"><rect x="44" y="82" width="12" height="36" rx="5" fill="#5D4037" opacity=".65"/><path d="M50 82Q30 76 14 70M50 82Q70 76 86 70" stroke="#4E342E" stroke-width="4" opacity=".5" stroke-linecap="round"/><ellipse cx="50" cy="46" rx="42" ry="30" fill="#1B5E20" opacity=".5"/><ellipse cx="50" cy="38" rx="34" ry="22" fill="#2E7D32" opacity=".45"/><ellipse cx="50" cy="30" rx="24" ry="15" fill="#43A047" opacity=".45"/><path d="M8 46Q26 20 50 18Q74 20 92 46Q80 70 50 72Q20 70 8 46Z" stroke="#81C784" stroke-width="1.5" opacity=".5" fill="none"/></svg>`,
+
+  // Southern Alps — blue mountains, white snow caps
+  'ef-sports':`<svg viewBox="0 0 120 80" fill="none"><path d="M0 75L18 33L36 56L52 18L68 46L84 13L98 40L120 75Z" fill="#1565C0" opacity=".38"/><path d="M52 18L46 35L58 35Z" fill="#E3F2FD" opacity=".95"/><path d="M84 13L78 27L90 27Z" fill="#ECEFF1" opacity=".95"/><path d="M18 33L14 42L22 42Z" fill="#CFD8DC" opacity=".85"/><path d="M0 75L18 33L36 56L52 18L68 46L84 13L98 40L120 75" stroke="#90CAF9" stroke-width="2" opacity=".6" fill="none" stroke-linejoin="round"/><path d="M0 75Q30 66 60 69Q90 66 120 75" fill="#0D47A1" opacity=".22"/></svg>`,
+
+  // Runner — orange silhouette, green track
+  'athletics':`<svg viewBox="0 0 100 100" fill="none"><ellipse cx="50" cy="82" rx="50" ry="7" fill="#33691E" opacity=".28"/><circle cx="63" cy="30" r="6" fill="#EF6C00" opacity=".85"/><path d="M63 36Q61 50 56 58" stroke="#FF8F00" stroke-width="4" opacity=".8" stroke-linecap="round"/><path d="M61 46Q52 52 46 56M61 46Q70 50 74 56" stroke="#FFA726" stroke-width="3" opacity=".75" stroke-linecap="round"/><path d="M56 58Q51 68 49 77M56 58Q61 70 66 77" stroke="#FF8F00" stroke-width="3" opacity=".7" stroke-linecap="round"/><path d="M63 34Q66 30 64 27Q62 30 63 34Z" fill="#A5D6A7" opacity=".85"/></svg>`,
+
+  // Winding NZ road through green hills
+  'motorsport':`<svg viewBox="0 0 120 80" fill="none"><path d="M0 60Q30 42 60 52Q90 40 120 55L120 80 0 80Z" fill="#388E3C" opacity=".4"/><path d="M5 75Q22 58 32 48Q44 36 52 38Q64 40 72 50Q82 60 92 53Q102 46 116 43" stroke="#616161" stroke-width="9" opacity=".5" fill="none" stroke-linecap="round"/><path d="M5 75Q22 58 32 48Q44 36 52 38Q64 40 72 50Q82 60 92 53Q102 46 116 43" stroke="#9E9E9E" stroke-width="5" opacity=".45" fill="none" stroke-linecap="round"/><path d="M5 75Q22 58 32 48Q44 36 52 38Q64 40 72 50Q82 60 92 53Q102 46 116 43" stroke="#FFEE58" stroke-width="1.5" opacity=".75" fill="none" stroke-linecap="round" stroke-dasharray="8,6"/></svg>`,
+
+  // Pukeko — royal blue, scarlet beak
+  'aucklandlive':`<svg viewBox="0 0 100 100" fill="none"><ellipse cx="46" cy="62" rx="22" ry="17" fill="#1565C0" opacity=".65"/><ellipse cx="65" cy="43" rx="12" ry="14" fill="#1976D2" opacity=".6"/><path d="M72 36Q78 34 76 41Q74 46 70 44Z" fill="#C62828" opacity=".95"/><rect x="68" y="33" width="5" height="4" rx="1" fill="#D32F2F" opacity=".9"/><circle cx="70" cy="39" r="2.5" fill="#1a1a1a" opacity=".9"/><path d="M28 57Q42 52 57 59" stroke="#42A5F5" stroke-width="4" opacity=".65" stroke-linecap="round"/><path d="M40 78L38 94M51 80L51 94" stroke="#90CAF9" stroke-width="3" opacity=".5" stroke-linecap="round"/></svg>`,
+
+  // Harakeke / flax — deep green sword blades
+  'ef-arts':`<svg viewBox="0 0 100 120" fill="none"><path d="M50 115Q48 82 40 52Q35 32 28 14" stroke="#2E7D32" stroke-width="4.5" opacity=".7" stroke-linecap="round"/><path d="M50 115Q52 82 60 52Q65 32 72 14" stroke="#388E3C" stroke-width="4.5" opacity=".7" stroke-linecap="round"/><path d="M50 115Q50 78 50 42Q50 22 50 8" stroke="#1B5E20" stroke-width="5.5" opacity=".6" stroke-linecap="round"/><path d="M50 115Q42 88 28 62Q18 44 10 28M50 115Q58 88 72 62Q82 44 90 28" stroke="#43A047" stroke-width="3" opacity=".5" stroke-linecap="round"/><path d="M58 20Q56 14 60 11M58 20Q62 15 65 17" stroke="#A5D6A7" stroke-width="2" opacity=".75" stroke-linecap="round"/></svg>`,
+
+  // Kakapo — olive green owl-parrot face, big eyes
+  'ef-comedy':`<svg viewBox="0 0 100 100" fill="none"><ellipse cx="50" cy="64" rx="28" ry="26" fill="#558B2F" opacity=".5"/><circle cx="41" cy="46" r="7" fill="#33691E" opacity=".6"/><circle cx="59" cy="46" r="7" fill="#33691E" opacity=".6"/><circle cx="41" cy="46" r="4" fill="#F9A825" opacity=".65"/><circle cx="59" cy="46" r="4" fill="#F9A825" opacity=".65"/><circle cx="42" cy="45" r="2" fill="#1a1a1a" opacity=".9"/><circle cx="60" cy="45" r="2" fill="#1a1a1a" opacity=".9"/><circle cx="42.6" cy="44.4" r=".7" fill="white" opacity=".9"/><circle cx="60.6" cy="44.4" r=".7" fill="white" opacity=".9"/><path d="M46 54Q50 60 54 54Q52 50 50 52Q48 50 46 54Z" fill="#A5D6A7" opacity=".7"/></svg>`,
+
+  // Auckland city skyline — navy night, lit windows, Sky Tower
+  'spark-arena':`<svg viewBox="0 0 120 80" fill="none"><path d="M0 64Q30 58 60 61Q90 58 120 64L120 80 0 80Z" fill="#0D1B4A" opacity=".55"/><rect x="75" y="5" width="5" height="54" fill="#263238" opacity=".65"/><line x1="77" y1="5" x2="77" y2="0" stroke="#FF8F00" stroke-width="3" opacity=".95"/><rect x="4" y="40" width="14" height="24" fill="#1C2A4A" opacity=".6"/><rect x="21" y="32" width="12" height="32" fill="#1A237E" opacity=".55"/><rect x="36" y="45" width="10" height="19" fill="#1C2A4A" opacity=".6"/><rect x="49" y="35" width="16" height="29" fill="#1A237E" opacity=".55"/><rect x="92" y="42" width="12" height="22" fill="#1C2A4A" opacity=".6"/><rect x="6" y="52" width="2" height="2" fill="#FFD54F" opacity=".95"/><rect x="10" y="46" width="2" height="2" fill="#FFD54F" opacity=".85"/><rect x="24" y="38" width="2" height="2" fill="#FFD54F" opacity=".95"/><rect x="28" y="44" width="2" height="2" fill="#FFD54F" opacity=".85"/><rect x="51" y="42" width="2" height="2" fill="#FFF176" opacity=".9"/><rect x="56" y="48" width="2" height="2" fill="#FFD54F" opacity=".85"/></svg>`,
+
+  // Humpback whale — ocean blue, majestic
+  'tuning-fork':`<svg viewBox="0 0 120 80" fill="none"><path d="M0 58Q30 50 60 55Q90 50 120 58L120 80 0 80Z" fill="#01579B" opacity=".32"/><path d="M14 45Q28 27 58 30Q88 33 104 43Q115 51 108 60Q98 70 74 67Q50 63 30 59Q14 56 14 45Z" fill="#0277BD" opacity=".55"/><path d="M34 53Q24 66 20 74" stroke="#B3E5FC" stroke-width="4.5" opacity=".65" stroke-linecap="round"/><path d="M104 43Q118 30 115 21M104 43Q112 36 110 27" stroke="#4FC3F7" stroke-width="3" opacity=".65" stroke-linecap="round"/><path d="M64 30Q61 17 64 7Q67 14 70 7Q72 14 68 28" stroke="#E1F5FE" stroke-width="2.5" opacity=".6" fill="none" stroke-linecap="round"/></svg>`,
+
+  // Waitomo glowworm caves — dark cavern, cyan magic dots
+  'powerstation':`<svg viewBox="0 0 100 80" fill="none"><path d="M5 80L5 38Q5 5 50 5Q95 5 95 38L95 80Z" fill="#1A1A2E" opacity=".65"/><path d="M18 5L15 22L21 22Z M36 5L33 18L39 18Z M54 5L51 25L57 25Z M70 5L67 20L73 20Z M84 5L81 16L87 16Z" fill="#546E7A" opacity=".5"/><circle cx="24" cy="34" r="3" fill="#00E5FF" opacity=".98"/><circle cx="24" cy="34" r="6" fill="#00E5FF" opacity=".2"/><circle cx="40" cy="26" r="2.5" fill="#18FFFF" opacity=".95"/><circle cx="54" cy="20" r="3" fill="#00E5FF" opacity=".98"/><circle cx="54" cy="20" r="7" fill="#00E5FF" opacity=".18"/><circle cx="68" cy="28" r="2.5" fill="#18FFFF" opacity=".92"/><circle cx="80" cy="40" r="3" fill="#00E5FF" opacity=".9"/><circle cx="30" cy="50" r="2" fill="#4DD0E1" opacity=".88"/><circle cx="58" cy="44" r="2.5" fill="#00E5FF" opacity=".92"/><circle cx="74" cy="54" r="2" fill="#4DD0E1" opacity=".85"/><circle cx="44" cy="60" r="2.5" fill="#18FFFF" opacity=".88"/></svg>`,
+
+  // Rugby posts — green field, white H-posts
+  'eden-park':`<svg viewBox="0 0 100 80" fill="none"><rect x="5" y="14" width="90" height="60" rx="2" fill="#2E7D32" opacity=".5"/><line x1="50" y1="14" x2="50" y2="74" stroke="#81C784" stroke-width="1.5" opacity=".35"/><ellipse cx="50" cy="44" rx="18" ry="12" stroke="#A5D6A7" stroke-width="1.5" opacity=".3" fill="none"/><line x1="18" y1="14" x2="18" y2="74" stroke="#66BB6A" stroke-width="1" opacity=".3"/><line x1="82" y1="14" x2="82" y2="74" stroke="#66BB6A" stroke-width="1" opacity=".3"/><line x1="46" y1="14" x2="46" y2="0" stroke="#F5F5F5" stroke-width="3.5" opacity=".9"/><line x1="54" y1="14" x2="54" y2="0" stroke="#F5F5F5" stroke-width="3.5" opacity=".9"/><line x1="43" y1="5" x2="57" y2="5" stroke="#F5F5F5" stroke-width="3.5" opacity=".9"/><line x1="46" y1="74" x2="46" y2="88" stroke="#F5F5F5" stroke-width="3.5" opacity=".9"/><line x1="54" y1="74" x2="54" y2="88" stroke="#F5F5F5" stroke-width="3.5" opacity=".9"/><line x1="43" y1="84" x2="57" y2="84" stroke="#F5F5F5" stroke-width="3.5" opacity=".9"/></svg>`,
+
+  // Mt Smart — red-orange scoria volcanic cone
+  'mt-smart':`<svg viewBox="0 0 100 90" fill="none"><path d="M10 76L50 16L90 76Z" fill="#BF360C" opacity=".5"/><path d="M22 76L50 24L78 76Z" fill="#D84315" opacity=".45"/><path d="M34 76L50 32L66 76Z" fill="#E64A19" opacity=".5"/><path d="M44 16Q50 12 56 16Q54 23 50 21Q46 23 44 16Z" fill="#FF8F00" opacity=".9"/><path d="M48 14Q50 8 52 14" stroke="#FFD54F" stroke-width="2.5" stroke-linecap="round" opacity=".95"/><path d="M0 76Q50 70 100 76" stroke="#FF8A65" stroke-width="2.5" opacity=".6"/></svg>`,
+
+  // Sheep — fluffy white, very NZ
+  'asb-showgrounds':`<svg viewBox="0 0 100 90" fill="none"><ellipse cx="50" cy="58" rx="30" ry="22" fill="#ECEFF1" opacity=".6"/><circle cx="37" cy="46" r="15" fill="#F5F5F5" opacity=".55"/><circle cx="54" cy="41" r="16" fill="#ECEFF1" opacity=".55"/><circle cx="68" cy="49" r="13" fill="#F5F5F5" opacity=".55"/><ellipse cx="78" cy="38" rx="12" ry="10" fill="#ECEFF1" opacity=".7"/><circle cx="82" cy="34" r="2" fill="#37474F" opacity=".85"/><path d="M85 42Q88 40 86 44" stroke="#78909C" stroke-width="2" opacity=".7" fill="none" stroke-linecap="round"/><path d="M78 29Q73 23 70 27" stroke="#90A4AE" stroke-width="2.5" opacity=".65" fill="none" stroke-linecap="round"/><path d="M31 74L29 87M41 76L41 87M55 76L55 87M65 74L67 87" stroke="#90A4AE" stroke-width="2.5" opacity=".5" stroke-linecap="round"/></svg>`,
+
+  // Dolphin leaping — silver arc, blue Hauraki Gulf
+  'asb-theatre':`<svg viewBox="0 0 120 80" fill="none"><path d="M0 64Q20 57 40 61Q60 57 80 61Q100 57 120 64L120 80 0 80Z" fill="#0277BD" opacity=".4"/><path d="M18 64Q23 28 48 14Q68 4 80 18Q90 30 85 50Q80 63 70 64" stroke="#90A4AE" stroke-width="5.5" opacity=".55" fill="none" stroke-linecap="round"/><path d="M18 64Q23 28 48 14Q68 4 80 18Q90 30 85 50Q80 63 70 64" stroke="#CFD8DC" stroke-width="2.5" opacity=".75" fill="none" stroke-linecap="round"/><path d="M57 17Q64 4 70 11" stroke="#B0BEC5" stroke-width="3.5" opacity=".75" stroke-linecap="round" fill="none"/><path d="M70 64Q80 69 85 64M70 64Q75 71 78 67" stroke="#ECEFF1" stroke-width="3" opacity=".75" stroke-linecap="round" fill="none"/><circle cx="40" cy="22" r="3" fill="#1a1a1a" opacity=".75"/></svg>`,
+
+  // Kiwifruit cross-section — green flesh, golden centre
+  'q-theatre':`<svg viewBox="0 0 100 100" fill="none"><circle cx="50" cy="50" r="42" fill="#558B2F" opacity=".5"/><circle cx="50" cy="50" r="42" stroke="#33691E" stroke-width="2.5" opacity=".6"/><circle cx="50" cy="50" r="12" fill="#F9A825" opacity=".7"/><circle cx="50" cy="50" r="6" fill="#FFD54F" opacity=".8"/><line x1="50" y1="8" x2="50" y2="38" stroke="#F9FBE7" stroke-width="2.5" opacity=".8"/><line x1="50" y1="62" x2="50" y2="92" stroke="#F9FBE7" stroke-width="2.5" opacity=".8"/><line x1="8" y1="50" x2="38" y2="50" stroke="#F9FBE7" stroke-width="2.5" opacity=".8"/><line x1="62" y1="50" x2="92" y2="50" stroke="#F9FBE7" stroke-width="2.5" opacity=".8"/><line x1="20" y1="20" x2="37" y2="37" stroke="#DCEDC8" stroke-width="2" opacity=".7"/><line x1="63" y1="37" x2="80" y2="20" stroke="#DCEDC8" stroke-width="2" opacity=".7"/><line x1="20" y1="80" x2="37" y2="63" stroke="#DCEDC8" stroke-width="2" opacity=".7"/><line x1="63" y1="63" x2="80" y2="80" stroke="#DCEDC8" stroke-width="2" opacity=".7"/></svg>`,
+
+  // Triple koru — jade teal Maori spirals
+  'skycity':`<svg viewBox="0 0 100 100" fill="none"><path d="M50 90Q50 65 58 50Q68 36 80 34Q92 34 94 44Q96 56 86 63Q76 70 67 64Q58 58 61 48Q64 40 72 40Q78 40 79 46Q79 52 74 55" stroke="#00695C" stroke-width="5.5" opacity=".8" fill="none" stroke-linecap="round"/><path d="M50 90Q50 65 42 50Q32 36 20 34Q8 34 6 44Q4 56 14 63Q24 70 33 64Q42 58 39 48Q36 40 28 40Q22 40 21 46Q21 52 26 55" stroke="#00897B" stroke-width="4" opacity=".65" fill="none" stroke-linecap="round"/><path d="M50 58Q50 44 54 36Q60 28 68 28Q75 28 75 35Q75 42 68 46Q63 48 61 44" stroke="#26A69A" stroke-width="2.5" opacity=".5" fill="none" stroke-linecap="round"/></svg>`,
+
+  // Moa — NZ's extinct giant bird, earth brown
+  'auckland-museum':`<svg viewBox="0 0 80 130" fill="none"><path d="M40 118Q40 80 44 54Q47 36 42 18" stroke="#795548" stroke-width="8" opacity=".45" stroke-linecap="round"/><ellipse cx="38" cy="94" rx="24" ry="28" fill="#6D4C41" opacity=".5"/><circle cx="42" cy="16" r="9" fill="#8D6E63" opacity=".55"/><path d="M48 15Q56 12 54 19" stroke="#FF8A65" stroke-width="2.5" opacity=".85" fill="none" stroke-linecap="round"/><circle cx="46" cy="13" r="2.5" fill="#1a1a1a" opacity=".85"/><path d="M28 122L24 130M45 124L48 130" stroke="#BCAAA4" stroke-width="6" opacity=".45" stroke-linecap="round"/></svg>`,
+
+  // Rimu weeping tree — forest green drooping branches
+  'silo-park':`<svg viewBox="0 0 100 120" fill="none"><path d="M50 115Q50 80 50 32Q50 16 50 5" stroke="#5D4037" stroke-width="5" opacity=".55" stroke-linecap="round"/><path d="M50 36Q34 30 18 24M50 50Q68 44 84 38M50 62Q32 57 16 52M50 74Q67 69 82 63" stroke="#2E7D32" stroke-width="3.5" opacity=".65" stroke-linecap="round"/><path d="M18 24Q12 36 11 50M84 38Q90 50 88 64M16 52Q10 63 12 76M82 63Q88 74 86 88" stroke="#66BB6A" stroke-width="2" opacity=".6" stroke-linecap="round"/><circle cx="11" cy="50" r="5" fill="#4CAF50" opacity=".4"/><circle cx="88" cy="64" r="5" fill="#4CAF50" opacity=".4"/></svg>`,
+};
+
+// ── Palettes ────────────────────────────────────────────────────────────────
+const PALETTES=[
+  {name:"Tropical",dot:"#F5A623",colors:["#E8394A","#F5A623","#00AAAA","#3A9E5F","#4A8FD4","#E8734A","#9B59B6","#2980B9"]},
+  {name:"Nordic",  dot:"#2E6DA4",colors:["#1B4F72","#148F77","#2874A6","#6C3483","#1E8449","#922B21","#D4AC0D","#1A5276"]},
+  {name:"Desert",  dot:"#C84B31",colors:["#C84B31","#D4813A","#2B9EB3","#6B8E23","#8B4513","#7D5BA6","#C0882F","#3D7A8A"]},
+  {name:"Candy",   dot:"#FF6B9D",colors:["#FF6B9D","#00C9A7","#845EC2","#FF9671","#00B4D8","#C34A36","#D65DB1","#4D8B31"]},
+  {name:"Mono",    dot:"#2C3E50",colors:["#1a1a2e","#2C3E50","#34495E","#212F3C","#1B2631","#17202A","#263238","#2E4057"]},
+];
+let pal=0;
+
+// ── Sites ────────────────────────────────────────────────────────────────────
+const SITES=[
+  {id:"ticketmaster", name:"Ticketmaster",         domain:"ticketmaster.co.nz",  desc:"Major touring acts — Spark Arena, Mt Smart, biggest NZ inventory",       cats:["music","sports","arts"],url:"https://www.ticketmaster.co.nz/",                                                                                              section:"Ticketing & Aggregators",size:"w2"},
+  {id:"ticketek",     name:"Ticketek",              domain:"ticketek.co.nz",       desc:"NZ tours, theatre & sports — lots not on Ticketmaster",                   cats:["music","sports","arts"],url:"https://www.ticketek.co.nz/",                                                                                                   section:"Ticketing & Aggregators"},
+  {id:"livenation",   name:"Live Nation",            domain:"livenation.co.nz",     desc:"Promoted concerts — often has pre-sale access",                           cats:["music"],               url:"https://www.livenation.co.nz/",                                                                                                 section:"Ticketing & Aggregators"},
+  {id:"ticketdirect", name:"TicketDirect",           domain:"ticketdirect.co.nz",   desc:"Sports events, stadiums, NZ-wide ticketing",                              cats:["sports","music"],      url:"https://www.ticketdirect.co.nz/",                                                                                               section:"Ticketing & Aggregators"},
+  {id:"eventfinda",   name:"Eventfinda",             domain:"eventfinda.co.nz",     desc:"Best local NZ coverage — free events, community & arts",                  cats:["music","sports","arts"],url:"https://www.eventfinda.co.nz/whatson/events/auckland",urlFn:(f,t)=>`https://www.eventfinda.co.nz/whatson/events/auckland?start_date=${fmt(f)}&end_date=${fmt(t)}`,section:"Ticketing & Aggregators",size:"w2"},
+  {id:"eventbrite",   name:"Eventbrite",             domain:"eventbrite.co.nz",     desc:"Community events, workshops, meetups — free & paid",                     cats:["music","arts"],        url:"https://www.eventbrite.co.nz/d/new-zealand--auckland/events/",urlFn:(f,t)=>`https://www.eventbrite.co.nz/d/new-zealand--auckland/events/?start_date=${fmt(f)}T00%3A00%3A00&end_date=${fmt(t)}T23%3A59%3A59`,section:"Ticketing & Aggregators"},
+  {id:"aucklandnz",         name:"Auckland NZ",         domain:"aucklandnz.com",        desc:"Official Auckland tourism events board",                              cats:["music","sports","arts"],url:"https://www.aucklandnz.com/events/all-events",urlFn:(f,t)=>`https://www.aucklandnz.com/events/all-events?startDate=${nzDate(f)}&endDate=${nzDate(t)}`,section:"Discovery",size:"w2"},
+  {id:"concreteplayground", name:"Concrete Playground",  domain:"concreteplayground.com", desc:"Editorial picks — events, pop-ups, things to do in Auckland",      cats:["music","arts"],        url:"https://concreteplayground.com/auckland/",                                                                                      section:"Discovery"},
+  {id:"heartofthecity",     name:"Heart of the City",    domain:"heartofthecity.co.nz",  desc:"Events in Auckland CBD — markets, festivals, activations",           cats:["music","arts"],        url:"https://heartofthecity.co.nz/auckland-events",                                                                                 section:"Discovery"},
+  {id:"facebook",           name:"Facebook Events",       domain:"facebook.com",           desc:"Local & community — best for smaller free happenings",               cats:["music","sports","arts"],url:"https://www.facebook.com/events?source=46&action_history=null",                                                             section:"Discovery"},
+  {id:"google",             name:"Google Events",          domain:"google.com",             desc:"Quick overview — surfaces events from across the web",               cats:["music","sports","arts"],url:"https://www.google.com/search?q=events+in+auckland+this+week",urlFn:(f,t,k)=>`https://www.google.com/search?q=${k==="week"?"events+in+auckland+this+week":k==="month"?"events+in+auckland+this+month":"upcoming+events+in+auckland"}`,section:"Discovery"},
+  {id:"songkick",      name:"Songkick",            domain:"songkick.com",         desc:"Concert calendar — track artists, get notified when they tour",             cats:["music"],url:"https://www.songkick.com/metro-areas/31442-new-zealand-auckland/this-weekend",urlFn:(f,t,k)=>k==="week"?"https://www.songkick.com/metro-areas/31442-new-zealand-auckland/this-weekend":"https://www.songkick.com/metro-areas/31442-new-zealand-auckland/this-month",section:"Music",size:"w2"},
+  {id:"undertheradar", name:"Under The Radar",      domain:"undertheradar.co.nz",  desc:"NZ indie, alternative & underground — the gig guide for local music",     cats:["music"],url:"https://www.undertheradar.co.nz/utr/gig_guide",section:"Music"},
+  {id:"rova",          name:"Rova",                 domain:"rova.nz",              desc:"NZ events app & listings",                                                cats:["music","arts"],url:"https://www.rova.nz/events",section:"Music"},
+  {id:"ef-music",      name:"Eventfinda Concerts",  domain:"eventfinda.co.nz",     desc:"Concerts & gig guide filtered view",                                      cats:["music"],url:"https://www.eventfinda.co.nz/concerts-gig-guide/events/auckland",section:"Music"},
+  {id:"ef-sports",  name:"Eventfinda Sports", domain:"eventfinda.co.nz",  desc:"Sports & outdoors events in Auckland",                        cats:["sports"],url:"https://www.eventfinda.co.nz/sports-outdoors/events/auckland",section:"Sports",size:"w2"},
+  {id:"athletics",  name:"Athletics NZ",       domain:"athletics.org.nz",  desc:"Road races, marathons, track — official NZ calendar",         cats:["sports"],url:"https://athletics.org.nz/events/",section:"Sports"},
+  {id:"motorsport", name:"Motorsport NZ",      domain:"motorsport.org.nz", desc:"Official NZ motorsport calendar — cars, bikes, circuit events", cats:["sports"],url:"https://motorsport.org.nz/calendar/",section:"Sports"},
+  {id:"aucklandlive", name:"Auckland Live",               domain:"aucklandlive.co.nz",  desc:"Aotea Centre, Civic Theatre, Town Hall, Kiri Te Kanawa Theatre",   cats:["arts"],url:"https://www.aucklandlive.co.nz/",section:"Arts & Theatre",size:"w2"},
+  {id:"ef-arts",      name:"Eventfinda Arts",             domain:"eventfinda.co.nz",    desc:"Exhibitions, theatre, dance, comedy on Eventfinda",                cats:["arts"],url:"https://www.eventfinda.co.nz/arts-culture/events/auckland",section:"Arts & Theatre"},
+  {id:"ef-comedy",    name:"Eventfinda Theatre & Comedy", domain:"eventfinda.co.nz",    desc:"Stand-up, improv, theatre shows",                                  cats:["arts"],url:"https://www.eventfinda.co.nz/theatre-comedy/events/auckland",section:"Arts & Theatre"},
+  {id:"spark-arena",    name:"Spark Arena",      domain:"sparkarena.co.nz",       desc:"12,000-cap indoor arena — biggest NZ shows",                        cats:["venue","music","sports"],url:"https://www.sparkarena.co.nz/all-events",            section:"Venues",size:"w2"},
+  {id:"tuning-fork",    name:"Tuning Fork",      domain:"tuningfork.co.nz",       desc:"Mid-size live music venue next to Spark Arena",                     cats:["venue","music"],         url:"https://www.tuningfork.co.nz",                        section:"Venues"},
+  {id:"powerstation",   name:"The Powerstation", domain:"thepowerstation.co.nz",  desc:"1,000-cap — mid-size international & local acts",                   cats:["venue","music"],         url:"https://www.powerstation.net.nz/",                    section:"Venues"},
+  {id:"eden-park",      name:"Eden Park",         domain:"edenpark.co.nz",         desc:"Stadium — rugby, cricket, large outdoor concerts",                  cats:["venue","sports"],        url:"https://www.edenpark.co.nz/events",                   section:"Venues"},
+  {id:"mt-smart",       name:"Mt Smart Stadium",  domain:"mtsmartstadium.co.nz",   desc:"Outdoor stadium — concerts, Warriors, motorsport",                  cats:["venue","sports"],        url:"https://www.mtsmartstadium.co.nz/whats-on",           section:"Venues"},
+  {id:"asb-showgrounds",name:"ASB Showgrounds",   domain:"asbshowgrounds.co.nz",   desc:"Exhibition & event centre — expos, markets, shows",                 cats:["venue"],                 url:"https://www.asbshowgrounds.co.nz/events",             section:"Venues"},
+  {id:"asb-theatre",    name:"ASB Theatre",        domain:"asbtheatre.co.nz",       desc:"Wynyard Quarter — musicals, theatre, large-scale productions",      cats:["venue","arts"],          url:"https://www.asbtheatre.co.nz/whats-on",               section:"Venues"},
+  {id:"q-theatre",      name:"Q Theatre",          domain:"qtheatre.co.nz",         desc:"Independent theatre — comedy, cabaret, dance, drama",               cats:["venue","arts"],          url:"https://www.qtheatre.co.nz/whats-on",                 section:"Venues"},
+  {id:"skycity",        name:"SkyCity Theatre",    domain:"skycityauckland.co.nz",  desc:"CBD — shows, comedy & international touring acts",                  cats:["venue","music","arts"],  url:"https://www.skycityauckland.co.nz/shows-events",      section:"Venues"},
+  {id:"auckland-museum",name:"Auckland Museum",    domain:"aucklandmuseum.com",     desc:"Domain — exhibitions, cultural events & performances",              cats:["venue","arts"],          url:"https://www.aucklandmuseum.com/whats-on",             section:"Venues"},
+  {id:"silo-park",      name:"Silo Park",          domain:"silopark.co.nz",         desc:"Wynyard Quarter — outdoor cinema, markets, free events",            cats:["venue","arts"],          url:"https://www.silopark.co.nz/whats-on",                 section:"Venues"},
+];
+
+const fmt    = d=>d.toISOString().slice(0,10);
+const nzDate = d=>[String(d.getDate()).padStart(2,"0"),String(d.getMonth()+1).padStart(2,"0"),d.getFullYear()].join("/");
+const addDays= n=>{const d=new Date();d.setDate(d.getDate()+n);return d;};
+
+let cat="all", time="month";
+const getTo=()=>time==="week"?addDays(7):time==="month"?addDays(30):addDays(365);
+const siteUrl=s=>{if(s.urlFn){return s.urlFn(new Date(),getTo(),time);}return s.url;};
+
+// ── Render ──────────────────────────────────────────────────────────────────
+function render(){
+  const grid=document.getElementById("grid");
+  const vis=SITES.filter(s=>cat==="all"||s.cats.includes(cat));
+  if(!vis.length){grid.innerHTML=`<div style="grid-column:1/-1;padding:4rem;text-align:center;color:#999;background:#fafafa">No sites.</div>`;return;}
+  const colors=PALETTES[pal].colors;
+  let ci=0;
+  const order=[],grp={};
+  vis.forEach(s=>{if(!grp[s.section]){grp[s.section]=[];order.push(s.section);}grp[s.section].push(s);});
+  const showSec=cat==="all"||order.length>1;
+  let html="";
+  order.forEach(sec=>{
+    if(showSec) html+=`<div class="sec">${sec}</div>`;
+    grp[sec].forEach(s=>{
+      const bg=colors[ci++%colors.length];
+      const sz=(cat==="all"&&s.size)?s.size:"";
+      const ill=ILLS[s.id]||ILLS['rova'];
+      html+=`<a class="tile ${sz}" href="${siteUrl(s)}" target="_blank" rel="noopener" style="background:${bg}">
+        <div class="t-ill">${ill}</div>
+        <div class="t-fav"><img src="https://www.google.com/s2/favicons?domain=${s.domain}&sz=64" alt="" onerror="this.style.display='none'"/></div>
+        <div class="t-foot">
+          <div class="t-name">${s.name}</div>
+          <div class="t-desc">${s.desc}</div>
+        </div>
+      </a>`;
+    });
+  });
+  grid.innerHTML=html;
+}
+
+function renderSwatches(){
+  document.getElementById("swatches").innerHTML=PALETTES.map((p,i)=>
+    `<div class="sw${i===pal?" on":""}" data-i="${i}" style="background:${p.dot}" title="${p.name}"></div>`
+  ).join("");
+}
+
+document.getElementById("swatches").addEventListener("click",e=>{const sw=e.target.closest(".sw");if(!sw)return;pal=+sw.dataset.i;renderSwatches();render();});
+document.getElementById("cats").addEventListener("click",e=>{const b=e.target.closest(".cat");if(!b)return;document.querySelectorAll(".cat").forEach(x=>x.classList.remove("on"));b.classList.add("on");cat=b.dataset.c;render();});
+document.getElementById("times").addEventListener("click",e=>{const b=e.target.closest(".tm");if(!b)return;document.querySelectorAll(".tm").forEach(x=>x.classList.remove("on"));b.classList.add("on");time=b.dataset.t;render();});
+document.getElementById("openall").addEventListener("click",()=>{const vis=SITES.filter(s=>cat==="all"||s.cats.includes(cat));if(vis.length>6&&!confirm(`Open ${vis.length} tabs?`))return;vis.forEach(s=>window.open(siteUrl(s),"_blank","noopener"));});
+
+renderSwatches();render();
+</script>
+</body>
+</html>
