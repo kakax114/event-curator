@@ -372,7 +372,7 @@ function render(){
   const showSec=cat==="all"||order.length>1;
   let html="";
   order.forEach(sec=>{
-    if(showSec) html+=`<div class="sec"><span class="sec-label">${sec}</span><div class="sec-line"></div></div>`;
+    if(showSec) html+=`<div class="sec"><span class="sec-label">${sec}</span></div>`;
     grp[sec].forEach(s=>{
       const bg=colors[ci++%colors.length];
       const sz=(cat==="all"&&s.size)?s.size:"";
