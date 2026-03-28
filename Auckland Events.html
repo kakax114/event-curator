@@ -52,6 +52,45 @@ body{background:#c8c8c8;font-family:'Inter',sans-serif}
 .sw:hover{transform:scale(1.2)}
 .sw.on{border-color:#111}
 
+/* ── HAMBURGER (mobile) ─────────────────────────────────────────────────── */
+#burger{
+  display:none;flex-direction:column;justify-content:center;gap:5px;
+  width:36px;height:36px;padding:6px;margin-left:auto;
+  background:none;border:none;cursor:pointer;flex-shrink:0;border-radius:6px;
+  transition:background .13s}
+#burger:hover{background:#f2f2f2}
+#burger span{
+  display:block;height:2px;width:100%;background:#111;border-radius:2px;
+  transition:transform .22s,opacity .22s}
+#burger.open span:nth-child(1){transform:translateY(7px) rotate(45deg)}
+#burger.open span:nth-child(2){opacity:0}
+#burger.open span:nth-child(3){transform:translateY(-7px) rotate(-45deg)}
+
+/* drawer that slides down on mobile */
+#drawer{
+  display:none;position:sticky;top:50px;z-index:39;
+  background:#fff;border-bottom:1.5px solid #e8e8e8;
+  box-shadow:0 4px 12px rgba(0,0,0,0.08);
+  padding:14px 22px 18px;flex-direction:column;gap:14px}
+#drawer.open{display:flex}
+
+.drawer-row{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.drawer-label{font-size:0.62rem;font-weight:700;letter-spacing:.1em;
+  text-transform:uppercase;color:#bbb;width:52px;flex-shrink:0}
+
+@media(max-width:700px){
+  #cats,#times,.div,#openall,#swatches{display:none!important}
+  #burger{display:flex}
+}
+#cats-m,#times-m{display:flex;gap:6px;flex-wrap:wrap}
+#swatches-m{display:flex;gap:5px;align-items:center}
+#openall-m{
+  font-family:'Notable',sans-serif;font-size:0.7rem;
+  letter-spacing:0.05em;text-transform:uppercase;
+  background:#111;color:#fff;border:none;border-radius:6px;
+  padding:7px 14px;cursor:pointer;white-space:nowrap;transition:background .13s}
+#openall-m:hover{background:#333}
+
 /* ── GRID ───────────────────────────────────────────────────────────────── */
 #grid{display:grid;grid-template-columns:repeat(5,1fr);
   gap:3px;background:#b8b8b8;grid-auto-flow:dense}
@@ -120,6 +159,37 @@ body{background:#c8c8c8;font-family:'Inter',sans-serif}
   <button id="openall">Open all ↗</button>
   <div class="div"></div>
   <div id="swatches"></div>
+  <button id="burger" aria-label="Menu">
+    <span></span><span></span><span></span>
+  </button>
+</div>
+
+<div id="drawer">
+  <div class="drawer-row">
+    <span class="drawer-label">Category</span>
+    <div id="cats-m">
+      <button class="cat on" data-c="all">All</button>
+      <button class="cat" data-c="music">Music</button>
+      <button class="cat" data-c="sports">Sports</button>
+      <button class="cat" data-c="arts">Arts</button>
+      <button class="cat" data-c="venue">Venues</button>
+    </div>
+  </div>
+  <div class="drawer-row">
+    <span class="drawer-label">Time</span>
+    <div id="times-m">
+      <button class="tm" data-t="week">Week</button>
+      <button class="tm on" data-t="month">Month</button>
+      <button class="tm" data-t="all">All</button>
+    </div>
+  </div>
+  <div class="drawer-row">
+    <span class="drawer-label">Theme</span>
+    <div id="swatches-m"></div>
+  </div>
+  <div class="drawer-row">
+    <button id="openall-m">Open all ↗</button>
+  </div>
 </div>
 
 <div id="grid"></div>
@@ -314,12 +384,39 @@ function renderSwatches(){
   ).join("");
 }
 
-document.getElementById("swatches").addEventListener("click",e=>{const sw=e.target.closest(".sw");if(!sw)return;pal=+sw.dataset.i;renderSwatches();render();});
-document.getElementById("cats").addEventListener("click",e=>{const b=e.target.closest(".cat");if(!b)return;document.querySelectorAll(".cat").forEach(x=>x.classList.remove("on"));b.classList.add("on");cat=b.dataset.c;render();});
-document.getElementById("times").addEventListener("click",e=>{const b=e.target.closest(".tm");if(!b)return;document.querySelectorAll(".tm").forEach(x=>x.classList.remove("on"));b.classList.add("on");time=b.dataset.t;render();});
-document.getElementById("openall").addEventListener("click",()=>{const vis=SITES.filter(s=>cat==="all"||s.cats.includes(cat));if(vis.length>6&&!confirm(`Open ${vis.length} tabs?`))return;vis.forEach(s=>window.open(siteUrl(s),"_blank","noopener"));});
+function renderSwatchesMobile(){
+  document.getElementById("swatches-m").innerHTML=PALETTES.map((p,i)=>
+    `<div class="sw${i===pal?" on":""}" data-i="${i}" style="background:${p.dot}" title="${p.name}"></div>`
+  ).join("");
+}
 
-renderSwatches();render();
+// sync active state across desktop + mobile controls
+function syncCats(c){cat=c;document.querySelectorAll(".cat").forEach(x=>x.classList.toggle("on",x.dataset.c===c));}
+function syncTimes(t){time=t;document.querySelectorAll(".tm").forEach(x=>x.classList.toggle("on",x.dataset.t===t));}
+
+function openAll(){const vis=SITES.filter(s=>cat==="all"||s.cats.includes(cat));if(vis.length>6&&!confirm(`Open ${vis.length} tabs?`))return;vis.forEach(s=>window.open(siteUrl(s),"_blank","noopener"));}
+
+// desktop controls
+document.getElementById("swatches").addEventListener("click",e=>{const sw=e.target.closest(".sw");if(!sw)return;pal=+sw.dataset.i;renderSwatches();renderSwatchesMobile();render();});
+document.getElementById("cats").addEventListener("click",e=>{const b=e.target.closest(".cat");if(!b)return;syncCats(b.dataset.c);render();});
+document.getElementById("times").addEventListener("click",e=>{const b=e.target.closest(".tm");if(!b)return;syncTimes(b.dataset.t);render();});
+document.getElementById("openall").addEventListener("click",openAll);
+
+// mobile drawer controls
+document.getElementById("swatches-m").addEventListener("click",e=>{const sw=e.target.closest(".sw");if(!sw)return;pal=+sw.dataset.i;renderSwatches();renderSwatchesMobile();render();});
+document.getElementById("cats-m").addEventListener("click",e=>{const b=e.target.closest(".cat");if(!b)return;syncCats(b.dataset.c);render();});
+document.getElementById("times-m").addEventListener("click",e=>{const b=e.target.closest(".tm");if(!b)return;syncTimes(b.dataset.t);render();});
+document.getElementById("openall-m").addEventListener("click",openAll);
+
+// burger toggle
+document.getElementById("burger").addEventListener("click",()=>{
+  const burger=document.getElementById("burger");
+  const drawer=document.getElementById("drawer");
+  burger.classList.toggle("open");
+  drawer.classList.toggle("open");
+});
+
+renderSwatches();renderSwatchesMobile();render();
 </script>
 </body>
 </html>
