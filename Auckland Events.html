@@ -4,7 +4,7 @@
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>Auckland Events</title>
-<link href="https://fonts.googleapis.com/css2?family=Notable&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Notable&family=Inter:wght@400;500;600&family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 body{background:#c8c8c8;font-family:'Inter',sans-serif}
@@ -154,6 +154,89 @@ body{background:#c8c8c8;font-family:'Inter',sans-serif}
 
 /* Arrow top-right */
 .t-arr{position:absolute;top:12px;right:14px;font-size:0.68rem;opacity:.38;z-index:1}
+
+/* ── EDITORIAL DARK THEME ────────────────────────────────────────────────── */
+body.editorial{background:#0e0e0e}
+
+body.editorial #bar{
+  background:#0e0e0e;
+  border-bottom:0.5px solid rgba(255,255,255,0.12);
+  box-shadow:none}
+body.editorial #bar-title{
+  font-family:'Playfair Display',serif;
+  font-size:0.95rem;font-weight:700;
+  letter-spacing:0.12em;color:#e8c87a}
+body.editorial #burger span{background:#fff}
+body.editorial #burger:hover{background:rgba(255,255,255,0.06)}
+
+body.editorial #drawer{
+  background:#0e0e0e;
+  border-bottom:0.5px solid rgba(255,255,255,0.12)}
+body.editorial .drawer-label{color:rgba(255,255,255,0.3)}
+body.editorial .cat{color:rgba(255,255,255,0.3)}
+body.editorial .cat.on{color:#e8c87a;border-bottom-color:#e8c87a;font-weight:600}
+body.editorial .cat:hover{color:rgba(255,255,255,0.7)}
+body.editorial .tm{color:rgba(255,255,255,0.3)}
+body.editorial .tm.on{background:#e8c87a;color:#0e0e0e;border-color:#e8c87a}
+body.editorial .tm:hover{border-color:rgba(255,255,255,0.3);color:rgba(255,255,255,0.7)}
+body.editorial #openall-m{
+  background:transparent;color:#fff;
+  border:0.5px solid rgba(255,255,255,0.25)}
+body.editorial #openall-m:hover{background:rgba(255,255,255,0.06)}
+body.editorial .sw.on{border-color:#e8c87a}
+
+body.editorial #grid{background:#0e0e0e}
+
+body.editorial .sec{
+  background:#0e0e0e;
+  padding:12px 22px 10px;
+  border-bottom:0.5px solid rgba(255,255,255,0.08)}
+body.editorial .sec-label{
+  font-family:'DM Sans',sans-serif;
+  font-size:0.6rem;letter-spacing:0.22em;
+  color:rgba(255,255,255,0.35);font-weight:500}
+
+body.editorial .tile{
+  background:#0e0e0e !important;
+  box-shadow:inset -1px -1px 0 rgba(255,255,255,0.08);
+  min-height:170px}
+body.editorial .tile:hover{
+  filter:none;
+  background:rgba(255,255,255,0.03) !important}
+body.editorial .tile::before{display:none}
+body.editorial .tile::after{background:none}
+body.editorial .t-ill{display:none}
+body.editorial .t-name{
+  font-family:'Playfair Display',serif;
+  font-size:1.35rem;font-weight:900;
+  letter-spacing:-0.01em;color:#fff}
+body.editorial .tile.w2 .t-name,
+body.editorial .tile.w3 .t-name{
+  font-family:'Playfair Display',serif;
+  font-size:1.7rem;letter-spacing:-0.02em}
+body.editorial .t-desc{
+  font-family:'DM Sans',sans-serif;
+  font-weight:300;color:rgba(255,255,255,0.45)}
+body.editorial .t-fav{
+  top:16px;bottom:auto;right:18px;
+  border:0.5px solid rgba(255,255,255,0.2);
+  background:transparent;backdrop-filter:none;
+  border-radius:6px}
+
+/* mode toggle pill in bar */
+#mode-toggle{
+  display:flex;align-items:center;gap:0;
+  border:1.5px solid #e8e8e8;border-radius:6px;
+  overflow:hidden;margin-right:10px;flex-shrink:0}
+.mode-btn{
+  font-family:'Inter',sans-serif;font-size:0.65rem;font-weight:600;
+  letter-spacing:.05em;text-transform:uppercase;
+  background:none;border:none;padding:5px 10px;cursor:pointer;
+  color:#bbb;transition:all .15s}
+.mode-btn.on{background:#111;color:#fff}
+body.editorial #mode-toggle{border-color:rgba(255,255,255,0.18)}
+body.editorial .mode-btn{color:rgba(255,255,255,0.35)}
+body.editorial .mode-btn.on{background:#e8c87a;color:#0e0e0e}
 </style>
 </head>
 <body>
@@ -177,6 +260,10 @@ body{background:#c8c8c8;font-family:'Inter',sans-serif}
   <button id="openall">Open all ↗</button>
   <div class="div"></div>
   <div id="swatches"></div>
+  <div id="mode-toggle">
+    <button class="mode-btn on" data-m="colour">Colour</button>
+    <button class="mode-btn" data-m="editorial">Editorial</button>
+  </div>
   <button id="burger" aria-label="Menu">
     <span></span><span></span><span></span>
   </button>
@@ -425,6 +512,15 @@ document.getElementById("swatches-m").addEventListener("click",e=>{const sw=e.ta
 document.getElementById("cats-m").addEventListener("click",e=>{const b=e.target.closest(".cat");if(!b)return;syncCats(b.dataset.c);render();});
 document.getElementById("times-m").addEventListener("click",e=>{const b=e.target.closest(".tm");if(!b)return;syncTimes(b.dataset.t);render();});
 document.getElementById("openall-m").addEventListener("click",openAll);
+
+// mode toggle (colour / editorial)
+document.getElementById("mode-toggle").addEventListener("click",e=>{
+  const btn=e.target.closest(".mode-btn");
+  if(!btn)return;
+  document.querySelectorAll(".mode-btn").forEach(x=>x.classList.remove("on"));
+  btn.classList.add("on");
+  document.body.classList.toggle("editorial",btn.dataset.m==="editorial");
+});
 
 // burger toggle
 document.getElementById("burger").addEventListener("click",()=>{
