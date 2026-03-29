@@ -242,13 +242,20 @@ body.editorial #mode-dot:hover{box-shadow:0 0 0 5px rgba(232,200,122,0.35)}
   background-size:100px 100px;
   mix-blend-mode:soft-light;opacity:.9;
 }
-/* editorial mode → animated rainbow wheel */
+/* editorial mode → static colour-wheel (hue ring, white centre) */
 body.editorial #mode-dot{
-  background:conic-gradient(#ff0000,#ff8c00,#ffe000,#00cc44,#00ccff,#0055ff,#cc00ff,#ff0000);
-  animation:hueshift 3s linear infinite;
+  background:
+    radial-gradient(circle, #fff 0%, transparent 65%),
+    conic-gradient(
+      hsl(0,100%,55%),hsl(30,100%,55%),hsl(60,100%,55%),
+      hsl(90,100%,45%),hsl(120,100%,40%),hsl(150,100%,45%),
+      hsl(180,100%,45%),hsl(210,100%,55%),hsl(240,100%,60%),
+      hsl(270,100%,55%),hsl(300,100%,55%),hsl(330,100%,55%),
+      hsl(360,100%,55%)
+    );
+  animation:none;
 }
 body.editorial #mode-dot::after{display:none}
-@keyframes hueshift{to{filter:hue-rotate(360deg)}}
 </style>
 </head>
 <body>
@@ -492,18 +499,18 @@ const SITES=[
   {id:"auckland-museum",name:"Auckland Museum",    domain:"aucklandmuseum.com",     desc:"Domain — exhibitions, cultural events & performances",              cats:["venue","arts"],          url:"https://www.aucklandmuseum.com/whats-on",             section:"Venues"},
   {id:"silo-park",      name:"Silo Park",          domain:"silopark.co.nz",         desc:"Wynyard Quarter — outdoor cinema, markets, free events",            cats:["venue","arts"],          url:"https://www.silopark.co.nz/whats-on",                 section:"Venues"},
   {id:"stargroup",      name:"Star Group",          domain:"stargroup.nz",            desc:"Auckland hospitality venues — bars, clubs & live entertainment",    cats:["venue","music","arts"],  url:"https://stargroup.nz/whats-on",                       section:"Venues"},
-  {id:"kiri-te-kanawa", name:"Kiri Te Kanawa Theatre", domain:"aucklandlive.co.nz",  desc:"2,139-seat flagship — opera, ballet, major performing arts",        cats:["venue","arts"],          url:"https://www.aucklandlive.co.nz/venues/kiri-te-kanawa-theatre", section:"Venues"},
-  {id:"aotea-square",   name:"Aotea Square",         domain:"aucklandlive.co.nz",    desc:"Open-air CBD square — festivals, markets, outdoor events",          cats:["venue","arts","music"],  url:"https://www.aucklandlive.co.nz/venues/aotea-square",  section:"Venues"},
-  {id:"aotea-great-hall",name:"Great Hall",          domain:"aucklandlive.co.nz",    desc:"Aotea Centre — 2,307 capacity, gala dinners & large-scale events",  cats:["venue","arts"],          url:"https://www.aucklandlive.co.nz/venues/great-hall",    section:"Venues"},
-  {id:"civic-theatre",  name:"Civic Theatre",        domain:"aucklandlive.co.nz",    desc:"2,379-seat art deco icon — musicals, comedy, touring shows",        cats:["venue","arts"],          url:"https://www.aucklandlive.co.nz/venues/civic",         section:"Venues"},
-  {id:"shed-10",        name:"Shed 10",              domain:"aucklandlive.co.nz",    desc:"Historic waterfront shed — events, markets, private functions",     cats:["venue","arts"],          url:"https://www.aucklandlive.co.nz/venue/shed-10-queens-wharf#current-shows",       section:"Venues"},
-  {id:"bruce-mason",    name:"Bruce Mason Theatre",  domain:"aucklandlive.co.nz",    desc:"1,102-seat North Shore venue — drama, dance, touring productions",  cats:["venue","arts"],          url:"https://www.aucklandlive.co.nz/venues/bruce-mason-centre", section:"Venues"},
-  {id:"herald-theatre", name:"Herald Theatre",       domain:"aucklandlive.co.nz",    desc:"Intimate 186-seat black box — fringe, experimental & new works",   cats:["venue","arts"],          url:"https://www.aucklandlive.co.nz/venues/herald-theatre",section:"Venues"},
-  {id:"town-hall-gh",   name:"Town Hall Great Hall", domain:"aucklandlive.co.nz",    desc:"1,529-seat Edwardian hall — classical concerts & orchestral events",cats:["venue","arts"],          url:"https://www.aucklandlive.co.nz/venues/auckland-town-hall", section:"Venues"},
-  {id:"concert-chamber",name:"Concert Chamber",      domain:"aucklandlive.co.nz",    desc:"431-seat Town Hall chamber — recitals, chamber music, lectures",   cats:["venue","arts"],          url:"https://www.aucklandlive.co.nz/venues/concert-chamber",section:"Venues"},
-  {id:"wintergarden",   name:"Wintergarden",         domain:"aucklandlive.co.nz",    desc:"Victorian glasshouse — intimate receptions & garden events",        cats:["venue","arts"],          url:"https://www.aucklandlive.co.nz/venues/wintergarden",  section:"Venues"},
-  {id:"the-cloud",      name:"The Cloud",            domain:"aucklandlive.co.nz",    desc:"Queens Wharf — flexible waterfront pavilion, up to 4,000",         cats:["venue","music","arts"],  url:"https://www.aucklandlive.co.nz/venues/the-cloud",     section:"Venues"},
-  {id:"viaduct-events", name:"Viaduct Events Centre",domain:"aucklandlive.co.nz",    desc:"Waterfront conference & events centre — expos, galas, functions",  cats:["venue","arts"],          url:"https://www.aucklandlive.co.nz/venues/viaduct-events-centre", section:"Venues"},
+  {id:"kiri-te-kanawa", name:"Kiri Te Kanawa Theatre", domain:"aucklandlive.co.nz",  desc:"2,139-seat flagship — opera, ballet, major performing arts",        cats:["venue","arts"],          url:"https://www.aucklandlive.co.nz/kiri-te-kanawa-theatre#current-shows", section:"Venues"},
+  {id:"aotea-square",   name:"Aotea Square",         domain:"aucklandlive.co.nz",    desc:"Open-air CBD square — festivals, markets, outdoor events",          cats:["venue","arts","music"],  url:"https://www.aucklandlive.co.nz/venue/aotea-square#current-shows",  section:"Venues"},
+  {id:"aotea-great-hall",name:"Great Hall",          domain:"aucklandlive.co.nz",    desc:"Aotea Centre — 2,307 capacity, gala dinners & large-scale events",  cats:["venue","arts"],          url:"https://www.aucklandlive.co.nz/venue/aotea-centre#current-shows",    section:"Venues"},
+  {id:"civic-theatre",  name:"Civic Theatre",        domain:"aucklandlive.co.nz",    desc:"2,379-seat art deco icon — musicals, comedy, touring shows",        cats:["venue","arts"],          url:"https://www.aucklandlive.co.nz/venue/the-civic#current-shows",         section:"Venues"},
+  {id:"shed-10",        name:"Shed 10",              domain:"aucklandlive.co.nz",    desc:"Historic waterfront shed — events, markets, private functions",     cats:["venue","arts"],          url:"https://www.aucklandlive.co.nz/venue/shed-10-queens-wharf#current-shows", section:"Venues"},
+  {id:"bruce-mason",    name:"Bruce Mason Theatre",  domain:"aucklandlive.co.nz",    desc:"1,102-seat North Shore venue — drama, dance, touring productions",  cats:["venue","arts"],          url:"https://www.aucklandlive.co.nz/venue/bruce-mason-centre#current-shows", section:"Venues"},
+  {id:"herald-theatre", name:"Herald Theatre",       domain:"aucklandlive.co.nz",    desc:"Intimate 186-seat black box — fringe, experimental & new works",   cats:["venue","arts"],          url:"https://www.aucklandlive.co.nz/herald-theatre#current-shows", section:"Venues"},
+  {id:"town-hall-gh",   name:"Town Hall Great Hall", domain:"aucklandlive.co.nz",    desc:"1,529-seat Edwardian hall — classical concerts & orchestral events",cats:["venue","arts"],          url:"https://www.aucklandlive.co.nz/venue/auckland-town-hall#current-shows", section:"Venues"},
+  {id:"concert-chamber",name:"Concert Chamber",      domain:"aucklandlive.co.nz",    desc:"431-seat Town Hall chamber — recitals, chamber music, lectures",   cats:["venue","arts"],          url:"https://www.aucklandlive.co.nz/venue/auckland-town-hall#current-shows", section:"Venues"},
+  {id:"wintergarden",   name:"Wintergarden",         domain:"aucklandlive.co.nz",    desc:"Victorian glasshouse — intimate receptions & garden events",        cats:["venue","arts"],          url:"https://www.aucklandlive.co.nz/venue/aotea-centre#current-shows",  section:"Venues"},
+  {id:"the-cloud",      name:"The Cloud",            domain:"aucklandlive.co.nz",    desc:"Queens Wharf — flexible waterfront pavilion, up to 4,000",         cats:["venue","music","arts"],  url:"https://www.aucklandlive.co.nz/venue/viaduct-events-centre#current-shows", section:"Venues"},
+  {id:"viaduct-events", name:"Viaduct Events Centre",domain:"aucklandlive.co.nz",    desc:"Waterfront conference & events centre — expos, galas, functions",  cats:["venue","arts"],          url:"https://www.aucklandlive.co.nz/venue/viaduct-events-centre#current-shows", section:"Venues"},
 ];
 
 const fmt    = d=>d.toISOString().slice(0,10);
